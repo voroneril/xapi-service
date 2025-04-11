@@ -1,4 +1,4 @@
-import { StatusCodes } from 'http-status-codes';
+import { FORBIDDEN, OK } from 'http-status-codes';
 import {
   TEST_EXPIRED_ORG_TOKEN,
   TEST_INVALID_SCOPE_TOKEN,
@@ -12,20 +12,18 @@ describe('expressPresenter.getFullAgent with scopes', () => {
   setup();
 
   it('should throw forbidden error when using invalid scope', async () => {
-    await getFullAgent()
-      .set('Authorization', TEST_INVALID_SCOPE_TOKEN)
-      .expect(StatusCodes.FORBIDDEN);
+    await getFullAgent().set('Authorization', TEST_INVALID_SCOPE_TOKEN).expect(FORBIDDEN);
   });
 
   it('should throw forbidden error when using expired client', async () => {
-    await getFullAgent().set('Authorization', TEST_EXPIRED_ORG_TOKEN).expect(StatusCodes.FORBIDDEN);
+    await getFullAgent().set('Authorization', TEST_EXPIRED_ORG_TOKEN).expect(FORBIDDEN);
   });
 
   it('should throw forbidden error when using untrusted client', async () => {
-    await getFullAgent().set('Authorization', TEST_UNTRUSTED_TOKEN).expect(StatusCodes.FORBIDDEN);
+    await getFullAgent().set('Authorization', TEST_UNTRUSTED_TOKEN).expect(FORBIDDEN);
   });
 
   it('should not throw error when using valid scopes', async () => {
-    await getFullAgent().set('Authorization', TEST_VALID_SCOPE_TOKEN).expect(StatusCodes.OK);
+    await getFullAgent().set('Authorization', TEST_VALID_SCOPE_TOKEN).expect(OK);
   });
 });

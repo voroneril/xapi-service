@@ -1,5 +1,5 @@
+/* tslint:disable:max-file-line-count */
 import { isPlainObject } from 'lodash';
-import { ReturnDocument } from 'mongodb';
 import IfMatch from '../errors/IfMatch';
 import IfNoneMatch from '../errors/IfNoneMatch';
 import MaxEtags from '../errors/MaxEtags';
@@ -41,45 +41,36 @@ export default (config: Config) => {
       const ifMatchFilter = getEtagFilter(opts.ifMatch);
 
       // Updates the profile if it exists with the correct ETag.
-      const updateOpResult = await collection.findOneAndUpdate(
-        {
-          ...ifMatchFilter,
-          ...profileFilter,
-        },
-        {
+      const updateOpResult = await collection.findOneAndUpdate({
+        ...ifMatchFilter,
+        ...profileFilter,
+      }, {
           $set: update,
-        },
-        {
-          returnDocument: ReturnDocument.AFTER,
+        }, {
+          returnOriginal: false,
           upsert: false,
-        },
-      );
+        });
 
       // Determines if the Profile was updated.
-      const updatedDocuments = updateOpResult.lastErrorObject?.n as number;
+      const updatedDocuments = updateOpResult.lastErrorObject.n as number;
       if (updatedDocuments === 1) {
-        const opResult = await collection.findOne({ _id: updateOpResult.value?._id });
-
         return {
-          extension: opResult?.extension,
-          id: opResult?._id.toString() as string,
+          extension: updateOpResult.value.extension,
+          id: updateOpResult.value._id.toString(),
         };
       }
     }
 
     // Creates the profile if it doesn't already exist.
-    const createOpResult = await collection.findOneAndUpdate(
-      profileFilter,
-      {
-        $setOnInsert: update,
-      },
-      {
-        returnDocument: ReturnDocument.AFTER,
+    const createOpResult = await collection.findOneAndUpdate(profileFilter, {
+      $setOnInsert: update,
+    }, {
+        returnOriginal: false,
         upsert: true,
-      },
-    );
+      });
 
-    const wasCreated = !createOpResult.lastErrorObject?.updatedExisting;
+    // Determines if the Profile was created or found.
+    const wasCreated = createOpResult.lastErrorObject.upserted !== undefined;
 
     // Throws the IfMatch error when the profile already exists.
     // This is because there must have been an ETag mismatch in the previous update.
@@ -91,13 +82,9 @@ export default (config: Config) => {
       throw new IfNoneMatch();
     }
 
-    const id = wasCreated ? createOpResult.lastErrorObject?.upserted : createOpResult.value?._id;
-
-    const opResult = await collection.findOne({ _id: id });
-
     return {
-      extension: opResult?.extension,
-      id: opResult?._id.toString() as string,
+      extension: createOpResult.value.extension,
+      id: createOpResult.value._id.toString(),
     };
   };
 };

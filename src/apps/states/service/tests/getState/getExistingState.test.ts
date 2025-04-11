@@ -1,3 +1,4 @@
+// tslint:disable:max-file-line-count
 import * as assert from 'assert';
 import NoModel from 'jscommons/dist/errors/NoModel';
 import assertError from 'jscommons/dist/tests/utils/assertError';
@@ -23,10 +24,10 @@ describe('getState with existing state', () => {
 
   const assertGetState = async (result: GetStateResult, content: string, contentType: string) => {
     const actualContent = await streamToString(result.content);
-    assert.strictEqual(actualContent, content);
-    assert.strictEqual(result.contentType, contentType);
-    assert.strictEqual(result.updatedAt.constructor, Date);
-    assert.strictEqual(result.etag.constructor, String);
+    assert.equal(actualContent, content);
+    assert.equal(result.contentType, contentType);
+    assert.equal(result.updatedAt.constructor, Date);
+    assert.equal(result.etag.constructor, String);
   };
 
   it('should get when getting text', async () => {
@@ -36,6 +37,7 @@ describe('getState with existing state', () => {
   });
 
   it('should get when agent properties are in a different order', async () => {
+    // tslint:disable:object-literal-sort-keys
     const creationAgent = {
       objectType: 'Agent',
       account: {
@@ -50,6 +52,7 @@ describe('getState with existing state', () => {
         name: 'steely.eyed',
       },
     };
+    // tslint:enable:object-literal-sort-keys
     await createTextState({ agent: creationAgent });
     const agentStateResult = await getTestState({ agent: retrievalAgent });
     await assertGetState(agentStateResult, TEST_CONTENT, TEXT_CONTENT_TYPE);

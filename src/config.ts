@@ -1,14 +1,16 @@
-import * as os from 'os';
-import { S3ClientConfig } from '@aws-sdk/client-s3';
+// tslint:disable:max-file-line-count
 import { config } from 'dotenv';
+config();
+
+import { S3 } from 'aws-sdk';
 import getBooleanOption from 'jscommons/dist/config/getBooleanOption';
 import getNumberOption from 'jscommons/dist/config/getNumberOption';
 import getStringOption from 'jscommons/dist/config/getStringOption';
 import getDbFromUrl from 'jscommons/dist/mongoRepo/utils/getDbFromUrl';
 import { defaultTo } from 'lodash';
+import * as os from 'os';
 
-config();
-
+const DEFAULT_REDIS_PORT = 6379;
 const DEFAULT_EXPRESS_PORT = 8081;
 const DEFAULT_TIMEOUT_MS = 55000; // 55 seconds.
 
@@ -19,19 +21,15 @@ const expressPort = getNumberOption(
   DEFAULT_EXPRESS_PORT,
 );
 
+const demoAuth = `http://localhost:${expressPort}/auth`;
 const accessLogsDir = `${storageDir}/accessLogs`;
 const newRelicLogsDir = `${storageDir}/newrelic-agent.log`;
 const newRelicLicenseKey = getStringOption(process.env.NEW_RELIC_LICENSE_KEY, '');
 const defaultMongoUrl = 'mongodb://localhost:27017/learninglocker_v2';
 const mongoUrl = getStringOption(process.env.MONGO_URL, defaultMongoUrl);
 
-const globalAwsRegion = process.env.GLOBAL_AWS_REGION;
-const globalAwsIamAccessKeyId = process.env.GLOBAL_AWS_IAM_ACCESS_KEY_ID;
-const globalAwsIamAccessKeySecret = process.env.GLOBAL_AWS_IAM_SECRET_ACCESS_KEY;
-
 export default {
   defaultTimeout: getNumberOption(process.env.DEFAULT_TIMEOUT_MS, DEFAULT_TIMEOUT_MS),
-  isQueuePriorityEnabled: process.env.ENABLE_QUEUE_PRIORITY === 'true',
   express: {
     allowFormBody: getBooleanOption(process.env.EXPRESS_ALLOW_FORM_BODY, false),
     allowUndefinedMethod: getBooleanOption(process.env.EXPRESS_ALLOW_UNDEFINED_METHOD, false),
@@ -39,6 +37,9 @@ export default {
     morganDirectory: getStringOption(process.env.EXPRESS_MORGAN_DIRECTORY, accessLogsDir),
     port: expressPort,
     xAPIPrefix: getStringOption(process.env.XAPI_PREFIX, '/data'),
+  },
+  fetchAuthRepo: {
+    llClientInfoEndpoint: getStringOption(process.env.LL_CLIENT_INFO_ENDPOINT, demoAuth),
   },
   azureStorageRepo: {
     account: getStringOption(process.env.FS_AZURE_ACCOUNT),
@@ -64,14 +65,6 @@ export default {
     prefix: getStringOption(process.env.REDIS_PREFIX, 'LEARNINGLOCKER'),
     url: getStringOption(process.env.REDIS_URL, 'redis://127.0.0.1:6379/0'),
   },
-  aws: {
-    region: globalAwsRegion,
-    accessKeyId: globalAwsIamAccessKeyId,
-    secretAccessKey: globalAwsIamAccessKeySecret,
-  },
-  sqs: {
-    prefix: getStringOption(process.env.QUEUE_NAMESPACE, 'DEV'),
-  },
   repoFactory: {
     authRepoName: getStringOption(process.env.AUTH_REPO, 'mongo'),
     eventsRepoName: getStringOption(process.env.EVENTS_REPO, 'redis'),
@@ -80,24 +73,32 @@ export default {
   },
   s3StorageRepo: {
     awsConfig: {
+      accessKeyId: getStringOption(process.env.FS_S3_ACCESS_KEY_ID),
       apiVersion: '2006-03-01',
-      region: getStringOption(process.env.FS_S3_REGION, globalAwsRegion),
-      tls: true,
-      credentials: {
-        accessKeyId: getStringOption(process.env.FS_S3_ACCESS_KEY_ID, globalAwsIamAccessKeyId),
-        secretAccessKey: getStringOption(
-          process.env.FS_S3_SECRET_ACCESS_KEY,
-          globalAwsIamAccessKeySecret,
-        ),
-      },
-    } as S3ClientConfig,
+      region: getStringOption(process.env.FS_S3_REGION),
+      secretAccessKey: getStringOption(process.env.FS_S3_SECRET_ACCESS_KEY),
+      signatureVersion: 'v4',
+      sslEnabled: true,
+    } as S3.ClientConfiguration,
     bucketName: getStringOption(process.env.FS_S3_BUCKET, 'xapi-service'),
   },
-  statementsService: {
-    awaitUpdates: getBooleanOption(
-      defaultTo<any>(process.env.SERVICE_AWAIT_UPDATES, process.env.SERVICE_AWAIT_UODATES),
-      false,
+  sentinel: {
+    db: getNumberOption(process.env.SENTINEL_DB, 0),
+    name: getStringOption(process.env.SENTINEL_NAME, 'mymaster'),
+    password: getStringOption(process.env.SENTINEL_PASSWORD),
+    prefix: getStringOption(process.env.SENTINEL_PREFIX, 'LEARNINGLOCKER'),
+    sentinels: (
+      getStringOption(process.env.SENTINEL_CONNECTIONS, '127.0.0.1:6379').split(' ').map((conn) => {
+        const [host, port] = conn.split(':');
+        return { host, port: getNumberOption(port, DEFAULT_REDIS_PORT) };
+      })
     ),
+  },
+  statementsService: {
+    awaitUpdates: getBooleanOption(defaultTo<any>(
+      process.env.SERVICE_AWAIT_UPDATES,
+      process.env.SERVICE_AWAIT_UODATES,
+    ), false),
     enableActorLowerCasing: getBooleanOption(
       process.env.STATEMENTS_SERVICE_LOWERCASE_ACTORS,
       false,
@@ -129,15 +130,9 @@ export default {
   winston: {
     cloudWatch: {
       awsConfig: {
-        accessKeyId: getStringOption(
-          process.env.WINSTON_CLOUDWATCH_ACCESS_KEY_ID,
-          globalAwsIamAccessKeyId,
-        ),
-        region: getStringOption(process.env.WINSTON_CLOUDWATCH_REGION, globalAwsRegion),
-        secretAccessKey: getStringOption(
-          process.env.WINSTON_CLOUDWATCH_SECRET_ACCESS_KEY,
-          globalAwsIamAccessKeySecret,
-        ),
+        accessKeyId: getStringOption(process.env.WINSTON_CLOUDWATCH_ACCESS_KEY_ID),
+        region: getStringOption(process.env.WINSTON_CLOUDWATCH_REGION),
+        secretAccessKey: getStringOption(process.env.WINSTON_CLOUDWATCH_SECRET_ACCESS_KEY),
       },
       enabled: getBooleanOption(process.env.WINSTON_CLOUDWATCH_ENABLED, false),
       level: getStringOption(process.env.WINSTON_CLOUDWATCH_LEVEL, 'info'),

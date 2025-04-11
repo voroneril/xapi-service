@@ -1,4 +1,4 @@
-import { StatusCodes } from 'http-status-codes';
+import { NO_CONTENT } from 'http-status-codes';
 import assertState from '../../../utils/assertState';
 import {
   JSON_CONTENT_TYPE,
@@ -14,7 +14,9 @@ describe('expressPresenter.postState when outside client', () => {
   setup();
 
   const patchOutsideState = async (token: string) => {
-    await patchState({}, '{"bar":2}').set('Authorization', token).expect(StatusCodes.NO_CONTENT);
+    await patchState({}, '{"bar":2}')
+      .set('Authorization', token)
+      .expect(NO_CONTENT);
   };
 
   it('should not overwrite existing model when using a different organisation', async () => {

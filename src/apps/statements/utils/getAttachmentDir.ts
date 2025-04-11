@@ -3,7 +3,8 @@ export interface GetAttachementDirOptions {
   readonly lrs_id: string;
 }
 
-export default (opts: GetAttachementDirOptions) =>
+export default (opts: GetAttachementDirOptions) => (
   opts.subFolder !== undefined
     ? `${opts.subFolder}/${opts.lrs_id}/attachments`
-    : `${opts.lrs_id}/attachments`;
+    : `${opts.lrs_id}/attachments`
+);

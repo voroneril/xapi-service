@@ -1,3 +1,4 @@
+
 import { Aborter, BlobURL } from '@azure/storage-blob';
 import getAttachmentDir from '../../../utils/getAttachmentDir';
 import getAttachmentPath from '../../../utils/getAttachmentPath';
@@ -10,7 +11,7 @@ export default (config: FacadeConfig): Signature => {
     const filePath = getAttachmentPath({ dir, hash, contentType });
 
     const blobUrl = BlobURL.fromContainerURL(config.containerUrl, filePath);
-    const file = await blobUrl.download(Aborter.none, 0);
+    const file = (await blobUrl.download(Aborter.none, 0));
     const stream = file.readableStreamBody as NodeJS.ReadableStream;
     const contentLength = file.contentLength;
 

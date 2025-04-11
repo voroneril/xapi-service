@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { StatusCodes } from 'http-status-codes';
+import { OK } from 'http-status-codes';
 import { get } from 'lodash';
 import { xapiHeaderVersion } from '../../utils/constants';
 import Config from '../Config';
@@ -33,7 +33,7 @@ export default async ({ config, res, query, headers }: Options) => {
     stateId,
   });
 
-  res.status(StatusCodes.OK);
+  res.status(OK);
   res.setHeader('ETag', `"${getStateResult.etag}"`);
   res.setHeader('Last-Modified', getStateResult.updatedAt.toISOString());
   res.setHeader('X-Experience-API-Version', xapiHeaderVersion);

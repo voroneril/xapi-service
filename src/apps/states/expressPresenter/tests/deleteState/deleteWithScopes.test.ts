@@ -1,4 +1,4 @@
-import { StatusCodes } from 'http-status-codes';
+import { FORBIDDEN, NO_CONTENT } from 'http-status-codes';
 import {
   TEST_EXPIRED_ORG_TOKEN,
   TEST_INVALID_SCOPE_TOKEN,
@@ -14,18 +14,24 @@ describe('expressPresenter.deleteState with scopes', () => {
   it('should throw forbidden error when using invalid scope', async () => {
     await deleteState()
       .set('Authorization', TEST_INVALID_SCOPE_TOKEN)
-      .expect(StatusCodes.FORBIDDEN);
+      .expect(FORBIDDEN);
   });
 
   it('should throw forbidden error when using expired client', async () => {
-    await deleteState().set('Authorization', TEST_EXPIRED_ORG_TOKEN).expect(StatusCodes.FORBIDDEN);
+    await deleteState()
+      .set('Authorization', TEST_EXPIRED_ORG_TOKEN)
+      .expect(FORBIDDEN);
   });
 
   it('should throw forbidden error when using untrusted client', async () => {
-    await deleteState().set('Authorization', TEST_UNTRUSTED_TOKEN).expect(StatusCodes.FORBIDDEN);
+    await deleteState()
+      .set('Authorization', TEST_UNTRUSTED_TOKEN)
+      .expect(FORBIDDEN);
   });
 
   it('should not error when using valid scopes', async () => {
-    await deleteState().set('Authorization', TEST_VALID_SCOPE_TOKEN).expect(StatusCodes.NO_CONTENT);
+    await deleteState()
+      .set('Authorization', TEST_VALID_SCOPE_TOKEN)
+      .expect(NO_CONTENT);
   });
 });

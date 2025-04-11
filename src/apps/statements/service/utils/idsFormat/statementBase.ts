@@ -9,6 +9,9 @@ export default (statement: StatementBase): IdFormattedStatementBase => {
     ...statement,
     actor: formatActor(statement.actor),
     verb: formatVerb(statement.verb),
-    ...(statement.context === undefined ? {} : { context: formatContext(statement.context) }),
+    ...(
+      statement.context === undefined ? {} :
+      { context: formatContext(statement.context) }
+    ),
   };
 };

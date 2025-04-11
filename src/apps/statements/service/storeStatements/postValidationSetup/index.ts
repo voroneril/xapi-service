@@ -1,6 +1,5 @@
 import { groupBy, mapValues } from 'lodash';
 import { sha1 } from 'object-hash';
-import { StatementProcessingPriority } from '../../../enums/statementProcessingPriority.enum';
 import AttachmentModel from '../../../models/AttachmentModel';
 import ClientModel from '../../../models/ClientModel';
 import UnstoredStatementModel from '../../../models/UnstoredStatementModel';
@@ -24,8 +23,6 @@ export default async (
   models: any[],
   attachments: AttachmentModel[],
   client: ClientModel,
-  priority: StatementProcessingPriority,
-  bypassQueues: string[],
 ) => {
   const storedTime = new Date();
   const storedTimeString = storedTime.toISOString();
@@ -43,7 +40,10 @@ export default async (
   const unstoredModelPromises = models.map(
     async (model: any): Promise<UnstoredStatementModel> => {
       const objectTypesModel = setupObjectTypes(model);
-      await checkSignedStatements(objectTypesModel, uniqueHashAttachmentDictionary);
+      await checkSignedStatements(
+        objectTypesModel,
+        uniqueHashAttachmentDictionary,
+      );
       const preHashStatement = setupPreHashStatement(objectTypesModel);
       const fullStatementWithID = { ...objectTypesModel, ...preHashStatement };
       const postHashStatement = setupPostHashStatement(
@@ -58,7 +58,6 @@ export default async (
         organisation: client.organisation,
         lrs_id: client.lrs_id,
         client: client._id,
-        priority,
         person: null,
         active: true,
         voided: false,
@@ -73,7 +72,6 @@ export default async (
         relatedActivities: getRelatedActivitiesFromStatement(postHashStatement),
         statement: postHashStatement,
         metadata: getMetadataFromStatement(postHashStatement),
-        completedQueues: bypassQueues,
       };
     },
   );

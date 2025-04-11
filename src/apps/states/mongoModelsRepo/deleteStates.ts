@@ -1,3 +1,4 @@
+/* tslint:disable:deprecation - find isn't really deprecated */
 import DeleteStatesOptions from '../repoFactory/options/DeleteStatesOptions';
 import DeleteStatesResult from '../repoFactory/results/DeleteStatesResult';
 import Config from './Config';
@@ -10,8 +11,7 @@ export default (config: Config) => {
 
     const stateFilter = getStatesFilter(opts);
 
-    const stateDocuments = await collection
-      .find(stateFilter)
+    const stateDocuments = await collection.find(stateFilter)
       .project({ _id: 1, content: 1, extension: 1 })
       .toArray();
 

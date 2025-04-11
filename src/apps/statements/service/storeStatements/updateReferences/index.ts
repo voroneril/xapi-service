@@ -10,6 +10,8 @@ import {
   getAgentsFromStatement,
   getRelatedAgentsFromStatement,
 } from '../queriables/getAgentsFromStatement';
+import eagerLoadDownRefs from './eagerLoadDownRefs';
+import eagerLoadUpRefs from './eagerLoadUpRefs';
 
 import {
   getActivitiesFromStatement,
@@ -18,8 +20,6 @@ import {
 
 import getRegistrationsFromStatement from '../queriables/getRegistrationsFromStatement';
 import getVerbsFromStatement from '../queriables/getVerbsFromStatement';
-import eagerLoadUpRefs from './eagerLoadUpRefs';
-import eagerLoadDownRefs from './eagerLoadDownRefs';
 
 const shortId = (id: string) => {
   return id[id.length - 1];
@@ -34,18 +34,14 @@ const stack = <T>(value: T, values: T[]): T[] => {
 };
 
 export default async (config: Config, models: UnstoredStatementModel[], client: ClientModel) => {
-  /* istanbul ignore if - Deprecated flag */
-  if (!config.enableReferencing) {
-    return;
-  }
+  /* istanbul ignore next */
+  if (!config.enableReferencing) { return; }
 
   const groupedUpRefIds = await eagerLoadUpRefs(config, models, client);
   const groupedDownRefs = await eagerLoadDownRefs(config, models, client);
   const groupedDownRefIds = keys(groupedDownRefs);
 
-  if (size(groupedUpRefIds) === 0 && size(groupedDownRefs) === 0) {
-    return;
-  }
+  if (size(groupedUpRefIds) === 0 && size(groupedDownRefs) === 0) { return; }
 
   const getDownRefId = (id: string): Promise<string> => {
     logger.debug('getDownRefId', shortId(id));
@@ -103,13 +99,15 @@ export default async (config: Config, models: UnstoredStatementModel[], client: 
     try {
       const newVisitedIds = stack(modelId, visitedIds);
       const downRefId = await getDownRefId(modelId);
-      return includes(newVisitedIds, downRefId)
-        ? // eslint-disable-next-line no-use-before-define
-          traverseUp([], newVisitedIds, downRefId)
-        : traverseDown(downRefId, newVisitedIds);
+      return (
+        includes(newVisitedIds, downRefId) ?
+          // tslint:disable-next-line:no-use-before-declare
+          traverseUp([], newVisitedIds, downRefId) :
+          traverseDown(downRefId, newVisitedIds)
+      );
     } catch (err) {
       if (err.constructor === NoModel) {
-        // eslint-disable-next-line no-use-before-define
+        // tslint:disable-next-line:no-use-before-declare
         return traverseUp([], [], modelId);
       }
       /* istanbul ignore next */
@@ -123,17 +121,13 @@ export default async (config: Config, models: UnstoredStatementModel[], client: 
     modelId: string,
   ): Promise<string[]> => {
     logger.silly('traverseUp', shortIds(visitedIds), shortIds(refIds), shortId(modelId));
-    if (includes(visitedIds, modelId)) {
-      return [];
-    }
-    if (refIds.length > 0) {
-      await setQueriables(modelId, refIds);
-    }
+    if (includes(visitedIds, modelId)) { return []; }
+    if (refIds.length > 0) { await setQueriables(modelId, refIds); }
 
     const newVisitedIds = stack(modelId, visitedIds);
     const newRefIds = stack(modelId, refIds);
     const upRefIds = await getUpRefIds(modelId);
-    // eslint-disable-next-line no-use-before-define
+    // tslint:disable-next-line:no-use-before-declare
     return traverseUpRefs(newVisitedIds, newRefIds, upRefIds);
   };
 
@@ -143,11 +137,9 @@ export default async (config: Config, models: UnstoredStatementModel[], client: 
     upRefIds: string[],
   ): Promise<string[]> => {
     logger.silly('traverseUpRefs', shortIds(visitedIds), shortIds(refIds), shortIds(upRefIds));
-    const traversedIds: string[][] = await Promise.all(
-      upRefIds.map((upRefId) => {
-        return traverseUp(visitedIds, refIds, upRefId);
-      }),
-    );
+    const traversedIds: string[][] = await Promise.all(upRefIds.map((upRefId) => {
+      return traverseUp(visitedIds, refIds, upRefId);
+    }));
     return union(visitedIds, refIds, ...traversedIds);
   };
 
@@ -156,9 +148,7 @@ export default async (config: Config, models: UnstoredStatementModel[], client: 
     const visitedIds = await results;
     const modelId = model.statement.id;
     logger.debug('Updating references', shortId(modelId));
-    if (includes(visitedIds, modelId)) {
-      return visitedIds;
-    }
+    if (includes(visitedIds, modelId)) { return visitedIds; }
 
     if (model.statement.object.objectType !== 'StatementRef') {
       const traversedIds = await traverseUp([], [], modelId);
@@ -168,4 +158,5 @@ export default async (config: Config, models: UnstoredStatementModel[], client: 
       return union(visitedIds, traversedIds);
     }
   }, Promise.resolve([]) as Promise<string[]>);
+  // tslint:disable-next-line:max-file-line-count
 };

@@ -1,7 +1,8 @@
 import * as assert from 'assert';
 import { merge } from 'lodash';
 
-import getMetadataFromStatement from '../../../../service/storeStatements/queriables/getMetadataFromStatement';
+import getMetadataFromStatement
+  from '../../../../service/storeStatements/queriables/getMetadataFromStatement';
 import { multipleChoices } from './fixtures/choice-interaction.fixture';
 import { likertStatement } from './fixtures/likert.fixture';
 import { multipleMatchingQuestions } from './fixtures/matching-interaction.fixture';
@@ -17,7 +18,7 @@ describe('Retrieve metadata from statement', () => {
       'https://learninglocker&46;net/result-duration': { seconds: 37080306 },
     };
 
-    assert.deepStrictEqual(actualDurationMetadata, expectedDurationMetadata);
+    assert.deepEqual(actualDurationMetadata, expectedDurationMetadata);
   });
 
   it('should return sequencing metadata from statement', () => {
@@ -28,22 +29,26 @@ describe('Retrieve metadata from statement', () => {
       'https://learninglocker&46;net/sequencing-response': ['tim', 'mike', 'ells', 'ben'],
     };
 
-    assert.deepStrictEqual(actualSequencingMetadata, expectedSequencingMetadata);
+    assert.deepEqual(actualSequencingMetadata, expectedSequencingMetadata);
   });
 
   it('should return duration and sequencing metadata from one statement', () => {
-    const statementWithDurationAndSequencing = merge({}, sequencingInteractionActivityStatement, {
-      result: {
-        duration: 'P1Y2M3DT4H5M6S',
+    const statementWithDurationAndSequencing = merge(
+      {},
+      sequencingInteractionActivityStatement,
+      {
+        result: {
+          duration: 'P1Y2M3DT4H5M6S',
+        },
       },
-    });
+    );
     const actualMetadata = getMetadataFromStatement(statementWithDurationAndSequencing);
     const expectedMetadata = {
       'https://learninglocker&46;net/result-duration': { seconds: 37080306 },
       'https://learninglocker&46;net/sequencing-response': ['tim', 'mike', 'ells', 'ben'],
     };
 
-    assert.deepStrictEqual(actualMetadata, expectedMetadata);
+    assert.deepEqual(actualMetadata, expectedMetadata);
   });
 
   it('should retrieve likert metadata from statement', () => {
@@ -52,23 +57,25 @@ describe('Retrieve metadata from statement', () => {
       'https://learninglocker&46;net/likert-response': 'likert_3',
     };
 
-    assert.deepStrictEqual(actualLikertMetadata, expectedLikertMetadata);
+    assert.deepEqual(actualLikertMetadata, expectedLikertMetadata);
   });
 
   it('should return choices metadata from statement', () => {
-    const actualMetadata = getMetadataFromStatement({
-      ...multipleChoices,
-      ...{
-        result: {
-          response: multipleChoices.result?.response,
+    const actualMetadata = getMetadataFromStatement(
+      {
+        ...multipleChoices,
+        ...{
+          result: {
+            response: multipleChoices.result?.response,
+          },
         },
       },
-    });
+    );
     const expectedMetadata = {
       'https://learninglocker&46;net/choice-response': ['golf', 'tetris'],
     };
 
-    assert.deepStrictEqual(actualMetadata, expectedMetadata);
+    assert.deepEqual(actualMetadata, expectedMetadata);
   });
 
   it('should return matching questions metadata', () => {
@@ -82,6 +89,6 @@ describe('Retrieve metadata from statement', () => {
       ],
     };
 
-    assert.deepStrictEqual(actualMatchingQuestionsMetadata, expectedMatchingQuestionsMetadata);
+    assert.deepEqual(actualMatchingQuestionsMetadata, expectedMatchingQuestionsMetadata);
   });
 });

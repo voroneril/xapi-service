@@ -1,8 +1,9 @@
+/* tslint:disable:no-magic-numbers */
 import { Request, Response } from 'express';
 import { get, mapKeys } from 'lodash';
 import { parse as parseQueryString } from 'query-string';
 import streamToString from 'stream-to-string';
-import { stringToStream } from '../../../../utils/stringToStream';
+import stringToStream from 'string-to-stream';
 import InvalidMethod from '../../errors/InvalidMethod';
 import Config from '../Config';
 import deleteWithService from './deleteWithService';

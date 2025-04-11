@@ -1,15 +1,16 @@
-import './server'; // eslint-disable-line import/no-unassigned-import
-import { ObjectId } from 'mongodb';
+// tslint:disable:no-console
+import './server'; // tslint:disable-line:no-import-side-effect
+import { ObjectID } from 'mongodb'; // tslint:disable-line:ordered-imports
 import connectToMongoDb from './utils/connectToMongoDb';
 
 const testOrg = {
-  _id: new ObjectId('5988f0f00000000000000000'),
+  _id: new ObjectID('5988f0f00000000000000000'),
   createdAt: new Date('2017-10-25T14:39:44.962Z'),
   name: 'Test Org',
   updatedAt: new Date('2017-10-25T14:39:58.376Z'),
 };
 const testStore = {
-  _id: new ObjectId('5988f0f00000000000000001'),
+  _id: new ObjectID('5988f0f00000000000000001'),
   createdAt: new Date('2017-10-25T14:39:44.962Z'),
   description: 'Test LRS Description',
   organisation: testOrg._id,
@@ -37,18 +38,16 @@ const testClient = {
 };
 
 (async () => {
-  const db = await connectToMongoDb();
-  console.info('Dropping database for ADL conformance tests.');
+  const db = await connectToMongoDb()();
+  console.log('Dropping database for ADL conformance tests.');
   await db.dropDatabase();
-  console.info('Seeding database for ADL conformance tests.');
+  console.log('Seeding database for ADL conformance tests.');
   await db.collection('organisations').insertOne(testOrg);
   await db.collection('lrs').insertOne(testStore);
   await db.collection('client').insertOne(testClient);
-})()
-  .then(() => {
-    console.info('Completed seeding for ADL conformance tests.');
-  })
-  .catch((err) => {
-    console.error(err);
-    process.exit(1);
-  });
+})().then(() => {
+  console.log('Completed seeding for ADL conformance tests.');
+}).catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

@@ -9,12 +9,13 @@ import {
 import supertest from '../../utils/supertest';
 
 export default (
-  optsOverrides: Record<string, unknown> = {},
+  optsOverrides: object = {},
   content: string = TEST_CONTENT,
+  contentType: string = TEXT_CONTENT_TYPE,
 ): Test => {
   return supertest
     .put(route)
-    .set('Content-Type', TEXT_CONTENT_TYPE)
+    .set('Content-Type', contentType)
     .set('If-None-Match', '*')
     .set('X-Experience-API-Version', xapiHeaderVersion)
     .query({

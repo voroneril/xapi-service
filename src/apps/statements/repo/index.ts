@@ -1,16 +1,19 @@
 import config from '../../../config';
-import RepoFactoryConfig from '../repo/FactoryConfig';
 import factory from './factory';
 import Repo from './Repo';
 import connectToMongoDb from './utils/connectToMongoDb';
 import connectToRedis from './utils/connectToRedis';
+import connectToSentinel from './utils/connectToSentinel';
 
-export const repoFactoryConfig: RepoFactoryConfig = {
+const repo: Repo = factory({
   auth: {
     facade: config.repoFactory.authRepoName,
     fake: {},
+    fetch: {
+      llClientInfoEndpoint: config.fetchAuthRepo.llClientInfoEndpoint,
+    },
     mongo: {
-      db: connectToMongoDb,
+      db: connectToMongoDb(),
     },
   },
   events: {
@@ -18,13 +21,16 @@ export const repoFactoryConfig: RepoFactoryConfig = {
     redis: {
       client: connectToRedis(),
       prefix: config.redis.prefix,
-      isQueuePriorityEnabled: config.isQueuePriorityEnabled,
+    },
+    sentinel: {
+      client: connectToSentinel(),
+      prefix: config.sentinel.prefix,
     },
   },
   models: {
     facade: config.repoFactory.modelsRepoName,
     mongo: {
-      db: connectToMongoDb,
+      db: connectToMongoDb(),
       maxTimeMs: config.defaultTimeout,
     },
   },
@@ -51,8 +57,6 @@ export const repoFactoryConfig: RepoFactoryConfig = {
       subFolder: config.azureStorageRepo.subFolder,
     },
   },
-};
-
-const repo: Repo = factory(repoFactoryConfig);
+});
 
 export default repo;

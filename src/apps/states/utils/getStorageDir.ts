@@ -5,13 +5,9 @@ export interface GetStorageDirOptions {
   readonly lrs_id: string;
 }
 
-const getSubFolderPath = (subfolder?: string) => {
-  /* istanbul ignore if - Just being cautious. */
-  if (subfolder === undefined) {
-    return [];
-  }
-  return [subfolder];
-};
-
 export default (opts: GetStorageDirOptions) =>
-  join(...getSubFolderPath(opts.subfolder), opts.lrs_id, 'states');
+  join(
+    ...(opts.subfolder !== undefined ? [opts.subfolder] : []),
+    opts.lrs_id,
+    'states',
+  );

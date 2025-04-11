@@ -1,9 +1,9 @@
-import { ObjectId } from 'mongodb';
+import { ObjectID } from 'mongodb';
 
 export interface MatchFullActivityOptions {
   readonly activityId: string;
-  readonly lrsId: ObjectId;
-  readonly organisationId: ObjectId;
+  readonly lrsId: ObjectID;
+  readonly organisationId: ObjectID;
 }
 
 export default (opts: MatchFullActivityOptions) => {

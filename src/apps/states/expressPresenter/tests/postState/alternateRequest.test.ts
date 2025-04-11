@@ -1,4 +1,4 @@
-import { StatusCodes } from 'http-status-codes';
+import { BAD_REQUEST, NO_CONTENT } from 'http-status-codes';
 import assertState from '../../../utils/assertState';
 import { route, xapiHeaderVersion } from '../../../utils/constants';
 import createObjectState from '../../../utils/createObjectState';
@@ -31,7 +31,7 @@ describe('expressPresenter.postState using the alternate request syntax', () => 
         registration: TEST_REGISTRATION,
         stateId: TEST_STATE_ID,
       })
-      .expect(StatusCodes.BAD_REQUEST);
+      .expect(BAD_REQUEST);
   });
 
   it('should merge when patching with object content ', async () => {
@@ -51,7 +51,7 @@ describe('expressPresenter.postState using the alternate request syntax', () => 
         registration: TEST_REGISTRATION,
         stateId: TEST_STATE_ID,
       })
-      .expect(StatusCodes.NO_CONTENT);
+      .expect(NO_CONTENT);
     await assertState('{"foo":1,"bar":2}');
   });
 });

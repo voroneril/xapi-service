@@ -41,7 +41,7 @@ const replaceDotsInObject = (searchValue: RegExp, replaceValue: string) => {
       return replaceDotsInActivity(searchValue, replaceValue)(data);
     }
     if (data.objectType === 'SubStatement') {
-      // eslint-disable-next-line no-use-before-define
+      // tslint:disable-next-line:no-use-before-declare
       return replaceDotsInStatement(searchValue, replaceValue)(data);
     }
     return data;

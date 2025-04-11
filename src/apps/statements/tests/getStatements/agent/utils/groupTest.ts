@@ -17,12 +17,10 @@ export default (assertFilteredStatements: FilteredStatementsAsserter) => {
         return createActor({
           mbox: 'mailto:test@example.com',
           objectType: 'Group',
-          member: [
-            {
-              ...actor,
-              objectType: 'Agent',
-            },
-          ],
+          member: [{
+            ...actor,
+            objectType: 'Agent',
+          }],
         });
       }, relatedAgents);
     });
@@ -31,12 +29,10 @@ export default (assertFilteredStatements: FilteredStatementsAsserter) => {
       agentFilterTest(assertFilteredStatements)((actor: any) => {
         return createActor({
           objectType: 'Group',
-          member: [
-            {
-              ...actor,
-              objectType: 'Group',
-            },
-          ],
+          member: [{
+            ...actor,
+            objectType: 'Group',
+          }],
         });
       }, relatedAgents);
     });

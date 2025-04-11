@@ -3,5 +3,5 @@ import getTestStates from '../../../../utils/getTestStates';
 
 export default async () => {
   const statesResult = await getTestStates();
-  assert.deepStrictEqual(statesResult.stateIds, []);
+  assert.deepEqual(statesResult.stateIds, []);
 };

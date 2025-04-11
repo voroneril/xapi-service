@@ -11,7 +11,7 @@ import {
 import supertest from '../../utils/supertest';
 
 export default (
-  optsOverrides: Record<string, unknown> = {},
+  optsOverrides: object = {},
   content: string = TEST_CONTENT,
   contentType: string = TEXT_CONTENT_TYPE,
   sendVersion = true,
@@ -20,17 +20,18 @@ export default (
   const stateId = TEST_STATE_ID;
   const agent = JSON.stringify(TEST_MBOX_AGENT);
   const registration = TEST_REGISTRATION;
-  const req = supertest.put(route).set('Content-Type', contentType);
+  const req = supertest
+    .put(route)
+    .set('Content-Type', contentType);
   if (sendVersion) {
     req.set('X-Experience-API-Version', xapiHeaderVersion);
   }
-  return req
-    .query({
-      activityId,
-      agent,
-      registration,
-      stateId,
-      ...optsOverrides,
-    })
-    .send(content);
+  return req.query({
+    activityId,
+    agent,
+    registration,
+    stateId,
+    ...optsOverrides,
+  })
+  .send(content);
 };

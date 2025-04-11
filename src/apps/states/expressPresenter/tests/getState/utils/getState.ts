@@ -8,7 +8,7 @@ import {
 } from '../../../../utils/testValues';
 import supertest from '../../utils/supertest';
 
-export default (optsOverrides: Record<string, unknown> = {}, sendVersion = true): Test => {
+export default (optsOverrides: object = {}, sendVersion = true): Test => {
   const activityId = TEST_ACTIVITY_ID;
   const agent = JSON.stringify(TEST_MBOX_AGENT);
   const registration = TEST_REGISTRATION;
@@ -18,10 +18,10 @@ export default (optsOverrides: Record<string, unknown> = {}, sendVersion = true)
     req.set('X-Experience-API-Version', xapiHeaderVersion);
   }
   return req.query({
-    activityId,
-    agent,
-    registration,
-    stateId,
-    ...optsOverrides,
-  });
+      activityId,
+      agent,
+      registration,
+      stateId,
+      ...optsOverrides,
+    });
 };

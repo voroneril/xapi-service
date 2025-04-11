@@ -10,14 +10,16 @@ describe('Retrieve matching questions metadata from statement', () => {
   it('should return matching questions metadata from statement', () => {
     const expectedEmptyMetadata = {};
 
-    const actualEmptyMetadataFromEmptyResult = getMatchingQuestionsMetadata({
-      ...singleMatchingQuestion,
-      ...{
-        result: {},
+    const actualEmptyMetadataFromEmptyResult = getMatchingQuestionsMetadata(
+      {
+        ...singleMatchingQuestion,
+        ...{
+          result: {},
+        },
       },
-    });
+    );
 
-    assert.deepStrictEqual(actualEmptyMetadataFromEmptyResult, expectedEmptyMetadata);
+    assert.deepEqual(actualEmptyMetadataFromEmptyResult, expectedEmptyMetadata);
   });
 
   it('should return metadata from single matching question', () => {
@@ -25,13 +27,12 @@ describe('Retrieve matching questions metadata from statement', () => {
       singleMatchingQuestion,
     );
     const expectedSingleMatchingQuestionMetadata = {
-      'https://learninglocker&46;net/matching-response': [['ben', '3']],
+      'https://learninglocker&46;net/matching-response': [
+        ['ben', '3'],
+      ],
     };
 
-    assert.deepStrictEqual(
-      actualSingleMatchingQuestionMetadata,
-      expectedSingleMatchingQuestionMetadata,
-    );
+    assert.deepEqual(actualSingleMatchingQuestionMetadata, expectedSingleMatchingQuestionMetadata);
   });
 
   it('should return metadata from multiple matching questions', () => {
@@ -47,9 +48,10 @@ describe('Retrieve matching questions metadata from statement', () => {
       ],
     };
 
-    assert.deepStrictEqual(
-      actualMultipleMatchingQuestionsMetadata,
-      expectedMultipleMatchingQuestionsMetadata,
-    );
+    assert
+      .deepEqual(
+        actualMultipleMatchingQuestionsMetadata,
+        expectedMultipleMatchingQuestionsMetadata,
+      );
   });
 });

@@ -17,25 +17,22 @@ export default (config: Config) => {
     const profileFilter = getProfileFilter(opts);
 
     // Deletes the document if it matches the profile and etag filters.
-    const opResult = await collection.findOneAndDelete(
-      {
-        ...profileFilter,
-        ...etagFilter,
-      },
-      {},
-    );
+    const opResult = await collection.findOneAndDelete({
+      ...profileFilter,
+      ...etagFilter,
+    }, {});
 
     // Determines if the identifier was deleted.
-    const matchedDocuments = opResult.lastErrorObject?.n as number;
+    const matchedDocuments = opResult.lastErrorObject.n as number;
     const wasDeleted = matchedDocuments === 1;
 
     // Returns the result of the deletion if the document was deleted.
     if (wasDeleted) {
       const deletedDoc = opResult.value;
       return {
-        contentType: deletedDoc?.contentType,
-        extension: deletedDoc?.extension,
-        id: deletedDoc?._id.toString() as string,
+        contentType: deletedDoc.contentType,
+        extension: deletedDoc.extension,
+        id: deletedDoc._id.toString(),
       };
     }
 

@@ -12,16 +12,13 @@ describe('get statements by agent in authority', () => {
       return {
         authority: {
           objectType: 'Group',
-          member: [
-            {
-              ...actor,
-              objectType: 'Agent',
-            },
-            {
-              mbox: 'mailto:test@example.com',
-              objectType: 'Agent',
-            },
-          ],
+          member: [{
+            ...actor,
+            objectType: 'Agent',
+          }, {
+            mbox: 'mailto:test@example.com',
+            objectType: 'Agent',
+          }],
         },
       };
     }, true);

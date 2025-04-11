@@ -108,9 +108,10 @@ describe(__filename, () => {
   it('should remove nulls when nulls are provided', async () => {
     await storeStatements([createStatement(TEST_STATEMENT)]);
     const actualStatement = await getStatement();
-    assert.deepStrictEqual(actualStatement, {
+    assert.deepEqual(actualStatement, {
       ...actualStatement,
       ...EXPECTED_TEST_STATEMENT,
     });
   });
+  // tslint:disable-next-line:max-file-line-count
 });

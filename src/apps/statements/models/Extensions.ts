@@ -1,5 +1,3 @@
-interface Extensions {
-  readonly [key: string]: any;
-}
+interface Extensions { readonly [key: string]: any; }
 
 export default Extensions;

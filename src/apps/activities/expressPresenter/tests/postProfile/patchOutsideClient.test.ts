@@ -1,4 +1,4 @@
-import { StatusCodes } from 'http-status-codes';
+import { NO_CONTENT } from 'http-status-codes';
 import assertProfile from '../../../utils/assertProfile';
 import {
   JSON_CONTENT_TYPE,
@@ -17,7 +17,7 @@ describe('expressPresenter.postProfile when outside client', () => {
   const patchOutsideClient = async (token: string) => {
     await patchProfile({}, TEST_OBJECT_PATCH_CONTENT)
       .set('Authorization', token)
-      .expect(StatusCodes.NO_CONTENT);
+      .expect(NO_CONTENT);
   };
 
   it('should not overwrite existing model when using a different organisation', async () => {

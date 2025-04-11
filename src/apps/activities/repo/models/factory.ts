@@ -4,8 +4,7 @@ import FactoryConfig from './FactoryConfig';
 
 export default (factoryConfig: FactoryConfig): Repo => {
   switch (factoryConfig.factoryName) {
-    default:
-    case 'mongo':
+    default: case 'mongo':
       return mongoModelsRepo(factoryConfig.mongo);
   }
 };

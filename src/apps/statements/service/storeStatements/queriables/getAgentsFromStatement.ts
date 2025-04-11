@@ -19,7 +19,7 @@ const getGroupMemberIdents = (group: Group): string[] => {
     return [];
   }
 
-  // eslint-disable-next-line no-use-before-define
+  // tslint:disable-next-line:no-use-before-declare
   return union(...group.member.map(getAgentsFromObject));
 };
 
@@ -30,6 +30,7 @@ export const getGroupIdents = (group: Group): string[] => {
 };
 
 const getAgentsFromObject = (obj: StatementObject): string[] => {
+
   switch (obj.objectType) {
     case 'Agent':
       return getActorIdents(obj);
@@ -60,7 +61,7 @@ const getAgentsFromInstructor = (statement: StatementBase): string[] => {
 
 const getRelatedAgentsFromStatementBase = (statement: StatementBase): string[] => {
   return [
-    // eslint-disable-next-line no-use-before-define
+    // tslint:disable-next-line:no-use-before-declare
     ...getAgentsFromStatement(statement),
     ...getAgentsFromTeam(statement),
     ...getAgentsFromInstructor(statement),
@@ -76,7 +77,10 @@ const getAgentsFromSubStatement = (statement: StatementBase): string[] => {
 };
 
 export const getAgentsFromStatement = (statement: StatementBase): string[] => {
-  return union([...getAgentsFromObject(statement.actor), ...getAgentsFromObject(statement.object)]);
+  return union([
+    ...getAgentsFromObject(statement.actor),
+    ...getAgentsFromObject(statement.object),
+  ]);
 };
 
 export const getRelatedAgentsFromStatement = (statement: Statement): string[] => {

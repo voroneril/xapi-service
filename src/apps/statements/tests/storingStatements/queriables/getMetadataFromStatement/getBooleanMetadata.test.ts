@@ -8,31 +8,35 @@ describe('Retrieve sequencing metadata from statement', () => {
   it('should return empty metadata from empty result', () => {
     const expectedEmptyMetadata = {};
 
-    const actualEmptyMetadataFromEmptyResult = getBooleanMetadata({
-      ...booleanInteractionActivityStatement,
-      ...({
-        result: {},
-      } as Partial<Statement>),
-    });
+    const actualEmptyMetadataFromEmptyResult = getBooleanMetadata(
+      {
+        ...booleanInteractionActivityStatement,
+        ...{
+          result: {},
+        } as Partial<Statement>,
+      },
+    );
 
-    assert.deepStrictEqual(actualEmptyMetadataFromEmptyResult, expectedEmptyMetadata);
+    assert.deepEqual(actualEmptyMetadataFromEmptyResult, expectedEmptyMetadata);
   });
 
   it('should return false metadata when `false` provided in the result', () => {
-    const actualCorrectMetadata = getBooleanMetadata({
-      ...booleanInteractionActivityStatement,
-      ...({
-        result: {
-          response: 'false',
-        },
-      } as Partial<Statement>),
-    });
+    const actualCorrectMetadata = getBooleanMetadata(
+      {
+        ...booleanInteractionActivityStatement,
+        ...{
+          result: {
+            response: 'false',
+          },
+        } as Partial<Statement>,
+      },
+    );
 
     const expectedCorrectMetadata = {
       'https://learninglocker&46;net/true-false-response': 'false',
     };
 
-    assert.deepStrictEqual(actualCorrectMetadata, expectedCorrectMetadata);
+    assert.deepEqual(actualCorrectMetadata, expectedCorrectMetadata);
   });
 
   it('should return true metadata when `true` provided in the result', () => {
@@ -42,6 +46,6 @@ describe('Retrieve sequencing metadata from statement', () => {
       'https://learninglocker&46;net/true-false-response': 'true',
     };
 
-    assert.deepStrictEqual(actualCorrectMetadata, expectedCorrectMetadata);
+    assert.deepEqual(actualCorrectMetadata, expectedCorrectMetadata);
   });
 });

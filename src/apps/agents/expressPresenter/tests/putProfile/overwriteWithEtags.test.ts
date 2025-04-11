@@ -1,4 +1,4 @@
-import { StatusCodes } from 'http-status-codes';
+import { BAD_REQUEST, CONFLICT, NO_CONTENT, PRECONDITION_FAILED } from 'http-status-codes';
 import createTextProfile from '../../../utils/createTextProfile';
 import getTestProfile from '../../../utils/getTestProfile';
 import setup from '../utils/setup';
@@ -13,7 +13,7 @@ describe('expressPresenter.putProfile with etags', () => {
     await overwriteProfile()
       .set('If-Match', getProfileResult.etag)
       .unset('If-None-Match')
-      .expect(StatusCodes.NO_CONTENT);
+      .expect(NO_CONTENT);
   });
 
   it('should throw precondition error when using an incorrect ifMatch', async () => {
@@ -21,17 +21,21 @@ describe('expressPresenter.putProfile with etags', () => {
     await overwriteProfile()
       .set('If-Match', 'incorrect_etag')
       .unset('If-None-Match')
-      .expect(StatusCodes.PRECONDITION_FAILED);
+      .expect(PRECONDITION_FAILED);
   });
 
   it('should throw precondition error when using an incorrect ifNoneMatch', async () => {
     await createTextProfile();
-    await overwriteProfile().set('If-None-Match', '*').expect(StatusCodes.PRECONDITION_FAILED);
+    await overwriteProfile()
+      .set('If-None-Match', '*')
+      .expect(PRECONDITION_FAILED);
   });
 
   it('should throw conflict error when not using ifMatch or ifNoneMatch', async () => {
     await createTextProfile();
-    await overwriteProfile().unset('If-None-Match').expect(StatusCodes.CONFLICT);
+    await overwriteProfile()
+      .unset('If-None-Match')
+      .expect(CONFLICT);
   });
 
   it('should throw max etag error when using ifMatch and ifNoneMatch', async () => {
@@ -39,10 +43,12 @@ describe('expressPresenter.putProfile with etags', () => {
     await overwriteProfile()
       .set('If-Match', 'incorrect_etag')
       .set('If-None-Match', '*')
-      .expect(StatusCodes.BAD_REQUEST);
+      .expect(BAD_REQUEST);
   });
 
   it('should throw missing etags error when not using ifMatch and ifNoneMatch', async () => {
-    await overwriteProfile().unset('If-None-Match').expect(StatusCodes.BAD_REQUEST);
+    await overwriteProfile()
+      .unset('If-None-Match')
+      .expect(BAD_REQUEST);
   });
 });

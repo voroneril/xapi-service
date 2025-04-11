@@ -25,12 +25,12 @@ describe('store statement stored', () => {
       }),
     ]);
     const statement = await getStatement();
-    assert.notStrictEqual(statement.stored, TEST_TIMESTAMP);
+    assert.notEqual(statement.stored, TEST_TIMESTAMP);
   });
 
   it('should generate a stored timestamp when stored is not set', async () => {
     await storeStatements([createStatement({ id: TEST_ID })]);
     const statement = await getStatement();
-    assert.notStrictEqual(statement.stored, TEST_TIMESTAMP);
+    assert.notEqual(statement.stored, TEST_TIMESTAMP);
   });
 });

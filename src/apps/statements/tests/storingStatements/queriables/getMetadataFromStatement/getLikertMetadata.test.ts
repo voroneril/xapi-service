@@ -6,14 +6,16 @@ import { likertStatement } from './fixtures/likert.fixture';
 describe('Retrieve likert metadata from statement', () => {
   it('should return empty metadata from empty result', () => {
     const expectedEmptyMetadata = {};
-    const actualEmptyMetadataFromEmptyResult = getLikertMetadata({
-      ...likertStatement,
-      ...{
-        result: {},
+    const actualEmptyMetadataFromEmptyResult = getLikertMetadata(
+      {
+        ...likertStatement,
+        ...{
+          result: {},
+        },
       },
-    });
+    );
 
-    assert.deepStrictEqual(actualEmptyMetadataFromEmptyResult, expectedEmptyMetadata);
+    assert.deepEqual(actualEmptyMetadataFromEmptyResult, expectedEmptyMetadata);
   });
 
   it('should retrieve metadata when likert is provided in the result', () => {
@@ -22,6 +24,6 @@ describe('Retrieve likert metadata from statement', () => {
       'https://learninglocker&46;net/likert-response': 'likert_3',
     };
 
-    assert.deepStrictEqual(actualCorrectMetadata, expectedCorrectMetadata);
+    assert.deepEqual(actualCorrectMetadata, expectedCorrectMetadata);
   });
 });

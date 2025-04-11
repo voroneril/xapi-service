@@ -1,16 +1,12 @@
-import { StatementProcessingPriority } from '../enums/statementProcessingPriority.enum';
 import Statement from './Statement';
 
-export interface Ref {
-  readonly statement: Statement;
-}
+export interface Ref { readonly statement: Statement; }
 
 interface UnstoredStatementModel {
   readonly hasGeneratedId: boolean;
   readonly organisation: string;
   readonly client: string;
   readonly lrs_id: string;
-  readonly priority: StatementProcessingPriority;
   readonly person: string | null;
   readonly active: boolean;
   readonly voided: boolean;
@@ -25,7 +21,6 @@ interface UnstoredStatementModel {
   readonly relatedActivities: string[];
   readonly statement: Statement;
   readonly metadata: { readonly [key: string]: any };
-  readonly completedQueues: string[];
 }
 
 export default UnstoredStatementModel;

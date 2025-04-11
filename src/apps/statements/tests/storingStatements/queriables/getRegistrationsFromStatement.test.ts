@@ -2,7 +2,9 @@ import assert from 'assert';
 import Activity from '../../../models/Activity';
 import Agent from '../../../models/Agent';
 import Statement from '../../../models/Statement';
-import getRegistrationsFromStatement from '../../../service/storeStatements/queriables/getRegistrationsFromStatement';
+// tslint:disable-next-line:import-spacing
+import getRegistrationsFromStatement
+  from '../../../service/storeStatements/queriables/getRegistrationsFromStatement';
 
 const REG = '1c86d8e9-f325-404f-b3d9-24c451035585';
 
@@ -38,11 +40,11 @@ const registrationStatement: Statement = {
 describe('create array of queriable registrations', () => {
   it('should return just the registration from the statement', () => {
     const registrations = getRegistrationsFromStatement(registrationStatement);
-    assert.deepStrictEqual(registrations, [REG]);
+    assert.deepEqual(registrations, [REG]);
   });
 
   it('should return just an empty array from a statement with no registrations', () => {
     const registrations = getRegistrationsFromStatement(statementDefaults);
-    assert.deepStrictEqual(registrations, []);
+    assert.deepEqual(registrations, []);
   });
 });

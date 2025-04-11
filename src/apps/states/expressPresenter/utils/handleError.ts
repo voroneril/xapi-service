@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { StatusCodes } from 'http-status-codes';
+import { BAD_REQUEST, FORBIDDEN } from 'http-status-codes';
 import { Options as CommonOptions } from 'jscommons/dist/expressPresenter/utils/handleError';
 import commonErrorHandler from 'jscommons/dist/expressPresenter/utils/handleError';
 import sendMessage from 'jscommons/dist/expressPresenter/utils/sendMessage';
@@ -19,18 +19,23 @@ export interface Options extends CommonOptions {
 }
 
 export default ({ config, errorId, res, err }: Options): Response => {
-  const { translator } = config;
+  const { logger, translator } = config;
+  const logError = (msg: string, meta?: any) => {
+    logger.error(`${errorId}: xapi-state handled - ${msg}`, meta);
+  };
 
   res.setHeader('X-Experience-API-Version', xapiHeaderVersion);
 
   if (err instanceof JsonSyntaxError) {
-    const code = StatusCodes.BAD_REQUEST;
+    const code = BAD_REQUEST;
     const message = translator.jsonSyntaxError(err);
+    logError(message);
     return sendMessage({ res, code, errorId, message });
   }
   if (err instanceof NonJsonObject) {
-    const code = StatusCodes.BAD_REQUEST;
+    const code = BAD_REQUEST;
     const message = translator.nonJsonObjectError(err);
+    logError(message);
     return sendMessage({ res, code, errorId, message });
   }
   if (err instanceof Warnings) {
@@ -40,20 +45,22 @@ export default ({ config, errorId, res, err }: Options): Response => {
       return translateWarning(translator, warning);
     });
     const obj = { warnings: strWarnings };
+    logError('Validation warnings', strWarnings);
     return sendObject({ res, code, errorId, obj });
   }
   if (err instanceof InvalidMethod) {
-    const code = StatusCodes.BAD_REQUEST;
+    const code = BAD_REQUEST;
     const message = translator.invalidMethodError(err);
+    logError(message);
     return sendMessage({ res, code, errorId, message });
   }
   if (err instanceof ExpiredClientError) {
-    const code = StatusCodes.FORBIDDEN;
+    const code = FORBIDDEN;
     const message = translator.expiredClientError(err);
     return sendMessage({ res, code, errorId, message });
   }
   if (err instanceof UntrustedClientError) {
-    const code = StatusCodes.FORBIDDEN;
+    const code = FORBIDDEN;
     const message = translator.untrustedClientError(err);
     return sendMessage({ res, code, errorId, message });
   }

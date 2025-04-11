@@ -1,4 +1,4 @@
-import { stringToStream } from '../../../utils/stringToStream';
+import stringToStream from 'string-to-stream';
 import GetStateOptions from '../serviceFactory/options/GetStateOptions';
 import GetStateResult from '../serviceFactory/results/GetStateResult';
 import { jsonContentType } from '../utils/constants';
@@ -24,8 +24,11 @@ export default (config: Config) => {
     });
 
     if (state.content !== undefined) {
-      const content =
-        state.contentType === jsonContentType ? JSON.stringify(state.content) : state.content;
+      const content = (
+        state.contentType === jsonContentType
+          ? JSON.stringify(state.content)
+          : state.content
+      );
       return {
         content: stringToStream(content),
         contentType: state.contentType,

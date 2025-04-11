@@ -1,4 +1,4 @@
-import { stringToStream } from '../../../utils/stringToStream';
+import stringToStream from 'string-to-stream';
 import OverwriteProfileOptions from '../serviceFactory/options/OverwriteProfileOptions';
 import createTextProfile from './createTextProfile';
 import { JSON_CONTENT_TYPE, TEST_JSON_CONTENT } from './testValues';

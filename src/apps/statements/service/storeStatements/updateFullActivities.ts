@@ -30,18 +30,26 @@ const getContextActivities = (statement: StatementBase, client: ClientModel) => 
     const contextActivities = statement.context.contextActivities;
 
     return [
-      ...(contextActivities.category === undefined
-        ? []
-        : convertToFullActivities(contextActivities.category, client)),
-      ...(contextActivities.grouping === undefined
-        ? []
-        : convertToFullActivities(contextActivities.grouping, client)),
-      ...(contextActivities.other === undefined
-        ? []
-        : convertToFullActivities(contextActivities.other, client)),
-      ...(contextActivities.parent === undefined
-        ? []
-        : convertToFullActivities(contextActivities.parent, client)),
+      ...(
+        contextActivities.category === undefined
+          ? []
+          : convertToFullActivities(contextActivities.category, client)
+      ),
+      ...(
+        contextActivities.grouping === undefined
+          ? []
+          : convertToFullActivities(contextActivities.grouping, client)
+      ),
+      ...(
+        contextActivities.other === undefined
+          ? []
+          : convertToFullActivities(contextActivities.other, client)
+      ),
+      ...(
+        contextActivities.parent === undefined
+          ? []
+          : convertToFullActivities(contextActivities.parent, client)
+      ),
     ];
   }
 
@@ -68,9 +76,11 @@ const getFullActivitiesFromStatements = (
 ) =>
   flatMap(statements, (statement) => [
     ...getStatementActivities(statement.statement, client),
-    ...(statement.statement.object.objectType === 'SubStatement'
-      ? getStatementActivities(statement.statement.object, client)
-      : []),
+    ...(
+      statement.statement.object.objectType === 'SubStatement'
+        ? getStatementActivities(statement.statement.object, client)
+        : []
+    ),
   ]);
 
 export interface Opts {
@@ -80,15 +90,11 @@ export interface Opts {
 }
 
 export default async ({ config, models, client }: Opts): Promise<void> => {
-  /* istanbul ignore if - Deprecated flag */
-  if (!config.enableActivityUpdates) {
-    return;
-  }
+  if (!config.enableActivityUpdates) { return; }
 
   const clientFullActivities = getFullActivitiesFromStatements(models, client);
 
-  const definedActivities = clientFullActivities.filter(
-    (fullActivity) =>
+  const definedActivities = clientFullActivities.filter((fullActivity) =>
       !isEmpty(fullActivity.context) ||
       !isEmpty(fullActivity.name) ||
       !isEmpty(fullActivity.description) ||
@@ -98,48 +104,57 @@ export default async ({ config, models, client }: Opts): Promise<void> => {
   );
 
   // Merges the activity definitions to reduce the number of updates.
-  const groupedActivities = groupBy(definedActivities, (activity) => activity.activityId);
+  const groupedActivities = groupBy(
+    definedActivities,
+    (activity) => activity.activityId,
+  );
 
   const fullActivities = map(
     groupedActivities,
     (matchingActivities, activityId): FullActivityDatabase => {
-      const names = matchingActivities.map((matchingActivity) => matchingActivity.name);
+      const names = matchingActivities.map(
+        (matchingActivity) => matchingActivity.name,
+      );
 
       const descriptions = matchingActivities.map(
         (matchingActivity) => matchingActivity.description,
       );
 
-      const extensions = matchingActivities.map((matchingActivity) => matchingActivity.extensions);
+      const extensions = matchingActivities.map(
+        (matchingActivity) => matchingActivity.extensions,
+      );
 
-      const contextActivitiesForFullActivity: FullActivityContextActivities[] = matchingActivities.map(
-        (matchingActivity) =>
+      const contextActivitiesForFullActivity: FullActivityContextActivities[] =
+        matchingActivities.map((matchingActivity) =>
           mapValues(matchingActivity.context?.contextActivities, (matchingContextActivities) =>
             matchingContextActivities !== undefined
-              ? matchingContextActivities.map(
-                  (matchingContextActivity) => matchingContextActivity.id,
-                )
+              // tslint:disable-next-line:max-line-length
+              ? matchingContextActivities.map((matchingContextActivity) => matchingContextActivity.id)
               : matchingContextActivities,
           ),
-      );
+        );
 
       const mergedContextActivities = contextActivitiesForFullActivity.reduce(
         (acc, contextActivity) => {
+
           return mergeWith(acc, contextActivity, (objValue, srcValue) =>
-            isArray(objValue) ? uniq(objValue.concat(srcValue)) : objValue,
+            isArray(objValue)
+              ? uniq(objValue.concat(srcValue))
+              : objValue,
           );
         },
       );
 
       const type = last(
         matchingActivities
-          .map((matchingActivity) => matchingActivity.type)
-          .filter((value) => value !== undefined),
+        .map((matchingActivity) => matchingActivity.type)
+        .filter((value) => value !== undefined),
       );
 
       const moreInfo = last(
         matchingActivities
-          .map((matchingActivity) => matchingActivity.moreInfo)
-          .filter((value) => value !== undefined),
+        .map((matchingActivity) => matchingActivity.moreInfo)
+        .filter((value) => value !== undefined),
       );
 
       return {
@@ -159,4 +174,5 @@ export default async ({ config, models, client }: Opts): Promise<void> => {
   );
 
   await config.repo.updateFullActivities({ fullActivities });
+// tslint:disable-next-line:max-file-line-count
 };

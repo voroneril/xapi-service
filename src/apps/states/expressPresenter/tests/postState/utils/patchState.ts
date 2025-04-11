@@ -11,17 +11,18 @@ import {
 import supertest from '../../utils/supertest';
 
 export default (
-  optsOverrides: Record<string, unknown> = {},
+  optsOverrides: object = {},
   content: string = TEST_OBJECT_CONTENT,
   contentType: string = JSON_CONTENT_TYPE,
   sendVersion = true,
 ): Test => {
-  const req = supertest.post(route).set('Content-Type', contentType);
+  const req = supertest
+    .post(route)
+    .set('Content-Type', contentType);
   if (sendVersion) {
     req.set('X-Experience-API-Version', xapiHeaderVersion);
   }
-  return req
-    .query({
+  return req.query({
       activityId: TEST_ACTIVITY_ID,
       agent: JSON.stringify(TEST_MBOX_AGENT),
       registration: TEST_REGISTRATION,

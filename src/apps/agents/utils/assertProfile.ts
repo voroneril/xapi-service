@@ -11,13 +11,13 @@ export default async (content: string, optsOverrides: Partial<GetProfilesOptions
   // Checks the profileIds.
   const profilesResult = await getTestProfiles(optsOverrides);
   const actualProfileIds = profilesResult.profileIds;
-  assert.deepStrictEqual(actualProfileIds, expectedProfileIds);
+  assert.deepEqual(actualProfileIds, expectedProfileIds);
 
   // Checks the content.
   const agentProfileResult = await getTestProfile(optsOverrides);
   const actualContent = await streamToString(agentProfileResult.content);
-  assert.strictEqual(actualContent, content);
-  assert.strictEqual(agentProfileResult.contentType.constructor, String);
-  assert.strictEqual(agentProfileResult.updatedAt.constructor, Date);
-  assert.strictEqual(agentProfileResult.etag.constructor, String);
+  assert.equal(actualContent, content);
+  assert.equal(agentProfileResult.contentType.constructor, String);
+  assert.equal(agentProfileResult.updatedAt.constructor, Date);
+  assert.equal(agentProfileResult.etag.constructor, String);
 };

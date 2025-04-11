@@ -1,3 +1,4 @@
+
 export default interface AzureFactoryConfig {
   readonly account?: string;
   readonly accountKey?: string;

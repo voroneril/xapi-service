@@ -1,4 +1,4 @@
-import { stringToStream } from '../../../../utils/stringToStream';
+import stringToStream from 'string-to-stream';
 import AttachmentModel from '../../models/AttachmentModel';
 import createSha from './createSha';
 

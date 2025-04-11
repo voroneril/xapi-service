@@ -1,6 +1,6 @@
 import matchesModel from './matchesModel';
 
-const matcher = (registration: string) => {
+const matcher = (registration: string): Object => {
   return {
     registrations: registration,
   };

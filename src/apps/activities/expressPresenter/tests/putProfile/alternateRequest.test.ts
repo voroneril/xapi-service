@@ -1,4 +1,4 @@
-import { StatusCodes } from 'http-status-codes';
+import { NO_CONTENT } from 'http-status-codes';
 import assertProfile from '../../../utils/assertProfile';
 import { route, xapiHeaderVersion } from '../../../utils/constants';
 import {
@@ -28,7 +28,7 @@ describe('expressPresenter.putProfile using the alternate request syntax', () =>
         content: TEST_CONTENT,
         profileId: TEST_PROFILE_ID,
       })
-      .expect(StatusCodes.NO_CONTENT);
+      .expect(NO_CONTENT);
     await assertProfile(TEST_CONTENT);
   });
 });

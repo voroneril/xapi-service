@@ -81,8 +81,8 @@ export default (appConfig: AppConfig): Router => {
       local: appConfig.repo.local,
       mongo: appConfig.repo.mongo,
       redis: appConfig.repo.redis,
-      sqs: appConfig.repo.sqs,
       s3: appConfig.repo.s3,
+      sentinel: appConfig.repo.sentinel,
       storageSubFolder: appConfig.repo.storageSubFolders.statements,
     },
     service: appConfig.service.statements,
@@ -97,4 +97,5 @@ export default (appConfig: AppConfig): Router => {
   router.use(`${xAPIPrefix}/xAPI/activities`, statementsRouter.fullActivitiesRouter);
   router.use(`${xAPIPrefix}/xAPI/statements`, statementsRouter.statementsRouter);
   return router;
+  // tslint:disable-next-line:max-file-line-count
 };

@@ -1,4 +1,3 @@
-import { Upload } from '@aws-sdk/lib-storage';
 import streamToString from 'stream-to-string';
 import getAttachmentDir from '../../../utils/getAttachmentDir';
 import getAttachmentPath from '../../../utils/getAttachmentPath';
@@ -15,19 +14,15 @@ export default (config: FacadeConfig): Signature => {
         contentType: model.contentType,
       });
       const content = await streamToString(model.stream);
-      const target = {
-        Body: Buffer.from(content, 'binary'),
-        Bucket: config.bucketName,
-        Key: filePath,
-        ContentEncoding: 'binary',
-        ContentLength: content.length,
-      };
-      const upload = new Upload({
-        client: config.client,
-        params: target,
-      });
-
-      await upload.done();
+      await config.client
+        .upload({
+          Bucket: config.bucketName,
+          Body: Buffer.from(content, 'binary'),
+          Key: filePath,
+          ContentEncoding: 'binary',
+          ContentLength: content.length,
+        })
+        .promise();
     });
     await Promise.all(promises);
   };

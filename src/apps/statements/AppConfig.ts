@@ -1,9 +1,8 @@
-import { S3ClientConfig } from '@aws-sdk/client-s3';
+import S3 from 'aws-sdk/clients/s3';
 import { Redis } from 'ioredis';
 import Tracker from 'jscommons/dist/tracker/Tracker';
 import { Db } from 'mongodb';
 import { LoggerInstance } from 'winston';
-import { SQSClient } from '@aws-sdk/client-sqs';
 
 export default interface AppConfig {
   readonly logger: LoggerInstance;
@@ -51,7 +50,7 @@ export default interface AppConfig {
       readonly storageDir: string;
     };
     readonly s3: {
-      readonly awsConfig: S3ClientConfig;
+      readonly awsConfig: S3.ClientConfiguration;
       readonly bucketName: string;
     };
     readonly mongo: {
@@ -61,12 +60,10 @@ export default interface AppConfig {
     readonly redis: {
       readonly prefix: string;
       readonly client: () => Promise<Redis>;
-      readonly isQueuePriorityEnabled: boolean;
     };
-    readonly sqs: {
+    readonly sentinel: {
       readonly prefix: string;
-      readonly client: () => Promise<SQSClient>;
-      readonly isQueuePriorityEnabled: boolean;
+      readonly client: () => Promise<Redis>;
     };
   };
 }

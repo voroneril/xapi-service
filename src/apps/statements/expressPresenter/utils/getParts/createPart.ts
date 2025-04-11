@@ -1,9 +1,9 @@
 import { trimStart } from 'lodash';
-import { stringToStream } from '../../../../../utils/stringToStream';
+import stringToStream from 'string-to-stream';
 import Part from '../../../models/Part';
 import parseHeaders from './parseHeaders';
 
-const trimmedChars = `\r\n `;
+const trimmedChars = `\r\n\s`;
 const headerBoundary = /\n{2}|(\r\n){2}/;
 
 export default (streamPart: string): Part => {

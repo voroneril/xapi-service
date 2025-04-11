@@ -1,11 +1,9 @@
-import { PassThrough } from 'stream';
 import checkScopes from 'jscommons/dist/service/utils/checkScopes';
-import { StatementProcessingPriority } from '../../enums/statementProcessingPriority.enum';
+import { PassThrough } from 'stream';
 import AttachmentModel from '../../models/AttachmentModel';
 import StoreStatementsOptions from '../../serviceFactory/options/StoreStatementsOptions';
 import { STATEMENT_WRITE_SCOPES } from '../../utils/scopes';
 import Config from '../Config';
-import logger from '../../../../logger';
 import checkAttachments from './checkAttachments';
 import checkVoiders from './checkVoiders';
 import createAttachments from './createAttachments';
@@ -35,27 +33,20 @@ const cloneAttachments = (attachmentModels: AttachmentModel[]): AttachmentModel[
 };
 
 export default (config: Config) => {
-  return async ({
-    models,
-    attachments,
-    client,
-    priority = StatementProcessingPriority.MEDIUM,
-    bypassQueues = [],
-  }: StoreStatementsOptions): Promise<string[]> => {
-    checkScopes(STATEMENT_WRITE_SCOPES, client.scopes);
-    const preValidatedModels = preValidationSetup(config, models);
+  return async (opts: StoreStatementsOptions): Promise<string[]> => {
+    checkScopes(STATEMENT_WRITE_SCOPES, opts.client.scopes);
+    const preValidatedModels = preValidationSetup(config, opts.models);
     validateStatements(preValidatedModels);
-    const clonedAttachments = cloneAttachments(attachments);
+    const attachments = cloneAttachments(opts.attachments);
+    const clonedAttachments = cloneAttachments(opts.attachments);
     const postValidatedModels = await postValidationSetup(
       preValidatedModels,
-      cloneAttachments(attachments),
-      client,
-      priority,
-      bypassQueues,
+      clonedAttachments,
+      opts.client,
     );
-    const unstoredModels = await getUnstoredModels(config, postValidatedModels, client);
-    const voidedObjectIds = await checkVoiders(config, unstoredModels, client);
-    checkAttachments(config, postValidatedModels, clonedAttachments);
+    const unstoredModels = await getUnstoredModels(config, postValidatedModels, opts.client);
+    const voidedObjectIds = await checkVoiders(config, unstoredModels, opts.client);
+    checkAttachments(config, postValidatedModels, attachments);
 
     await createStatements(config, unstoredModels);
 
@@ -63,8 +54,8 @@ export default (config: Config) => {
       return postValidatedModel.statement.id;
     });
 
-    const unstoredStatementProperties = unstoredModels.map((unstoredModel) =>
-      JSON.stringify({
+    const unstoredStatementProperties = unstoredModels.map(
+      (unstoredModel) => JSON.stringify({
         statementId: unstoredModel.statement.id,
         organisationId: unstoredModel.organisation,
       }),
@@ -72,33 +63,28 @@ export default (config: Config) => {
 
     // Completes actions that do not need to be awaited.
     const unawaitedUpdates: Promise<any> = Promise.all([
-      createAttachments(config, clonedAttachments, client.lrs_id),
-      voidStatements(config, unstoredModels, voidedObjectIds, client),
-      updateReferences(config, unstoredModels, client),
-      updateFullActivities({ config, models: unstoredModels, client }),
-      config.repo.incrementStoreCount({ client, count: unstoredModels.length }),
+      createAttachments(config, attachments, opts.client.lrs_id),
+      voidStatements(config, unstoredModels, voidedObjectIds, opts.client),
+      updateReferences(config, unstoredModels, opts.client),
+      updateFullActivities({ config, models: unstoredModels, client: opts.client }),
+      config.repo.incrementStoreCount({ client: opts.client, count: unstoredModels.length }),
     ]).catch((err) => {
       /* istanbul ignore next */
       config.logger.error('Error in unawaited updates', err);
     });
 
     await awaitUpdates(config, unawaitedUpdates);
-
     if (unstoredStatementProperties.length !== 0) {
-      config.repo
-        .emitNewStatements({
-          statementProperties: unstoredStatementProperties,
-          priority,
-        })
+      config.repo.emitNewStatements({ statementProperties: unstoredStatementProperties })
         .catch((err) => {
           /* istanbul ignore next */
-          logger.error('emitNewStatements error', err);
+          console.error(err); // tslint:disable-line:no-console
         });
     }
 
     const tracker = await config.tracker;
     tracker('batchSize', unstoredModels.length);
-    tracker('sentBatchSize', models.length);
+    tracker('sentBatchSize', opts.models.length);
 
     return statementIds;
   };

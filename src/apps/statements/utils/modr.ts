@@ -1,7 +1,5 @@
 export type Modifier = (data: any) => any;
-export interface Schema {
-  readonly [key: string]: Modifier;
-}
+export interface Schema { readonly [key: string]: Modifier; }
 
 export const defaultValue = (value: () => any): Modifier => {
   return (data) => {
@@ -19,7 +17,11 @@ export const keepValue: Modifier = (data) => data;
 
 export const modifyType = (type: any, modifier: Modifier): Modifier => {
   return (data) => {
-    return data !== undefined && data !== null && data.constructor === type ? modifier(data) : data;
+    return (
+      data !== undefined && data !== null && data.constructor === type ?
+        modifier(data) :
+        data
+    );
   };
 };
 

@@ -2,7 +2,8 @@ import assert from 'assert';
 import Activity from '../../../models/Activity';
 import Agent from '../../../models/Agent';
 import Statement from '../../../models/Statement';
-import getVerbsFromStatements from '../../../service/storeStatements/queriables/getVerbsFromStatement';
+import getVerbsFromStatements
+  from '../../../service/storeStatements/queriables/getVerbsFromStatement';
 
 const VERB_ID = 'http://example.org/test-verb';
 
@@ -31,6 +32,6 @@ const statementDefaults: Statement = {
 describe('create array of queriable verbs', () => {
   it('should return the verb from the statement', () => {
     const verbs = getVerbsFromStatements(statementDefaults);
-    assert.deepStrictEqual(verbs, [VERB_ID]);
+    assert.deepEqual(verbs, [VERB_ID]);
   });
 });

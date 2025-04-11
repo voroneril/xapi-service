@@ -1,5 +1,5 @@
+/* tslint:disable:max-file-line-count */
 import { isPlainObject } from 'lodash';
-import { ReturnDocument } from 'mongodb';
 import OverwriteStateOptions from '../repoFactory/options/OverwriteStateOptions';
 import OverwriteStateResult from '../repoFactory/results/OverwriteStateResult';
 import Config from './Config';
@@ -29,17 +29,14 @@ export default (config: Config) => {
         $set: update,
       },
       {
-        returnDocument: ReturnDocument.AFTER, // Ensures the updated document is returned.
+        returnOriginal: false, // Ensures the updated document is returned.
         upsert: true, // Creates the state when it's not found.
       },
     );
 
-    const id = createOpResult.lastErrorObject?.upserted || createOpResult.value?._id;
-    const opResult = await collection.findOne({ _id: id });
-
     return {
-      extension: opResult?.extension,
-      id: opResult?._id.toString() as string,
+      extension: createOpResult.value.extension,
+      id: createOpResult.value._id.toString(),
     };
   };
 };

@@ -19,6 +19,6 @@ describe('getProfiles with scopes', () => {
     const getProfilesResult = await getTestProfiles({
       client: TEST_VALID_SCOPE_CLIENT,
     });
-    assert.deepStrictEqual(getProfilesResult.profileIds, []);
+    assert.deepEqual(getProfilesResult.profileIds, []);
   });
 });

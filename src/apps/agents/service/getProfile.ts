@@ -1,4 +1,4 @@
-import { stringToStream } from '../../../utils/stringToStream';
+import stringToStream from 'string-to-stream';
 import GetProfileOptions from '../serviceFactory/options/GetProfileOptions';
 import GetProfileResult from '../serviceFactory/results/GetProfileResult';
 import Config from './Config';

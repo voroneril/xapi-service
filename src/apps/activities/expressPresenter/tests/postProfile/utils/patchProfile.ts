@@ -9,7 +9,7 @@ import {
 import supertest from '../../utils/supertest';
 
 export default (
-  optsOverrides: Record<string, unknown> = {},
+  optsOverrides: object = {},
   content: string = TEST_OBJECT_CONTENT,
   contentType: string = JSON_CONTENT_TYPE,
 ): Test => {

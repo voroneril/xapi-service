@@ -20,6 +20,8 @@ const modifySubStatement = modr.modifySchema({
 export const wrapContextActivitiesInArrays = modr.modifySchema({
   context: modifyContext,
   object: modr.modifyType(Object, (data) => {
-    return data.objectType === 'SubStatement' ? modifySubStatement(data) : data;
+    return (data.objectType === 'SubStatement'
+      ? modifySubStatement(data)
+      : data);
   }),
 });

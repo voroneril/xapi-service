@@ -7,6 +7,9 @@ export default (content: string, fileUrl?: string): any => {
     contentType: 'application/octet-stream',
     sha2: createSha(content),
     length: 0,
-    ...(fileUrl === undefined ? {} : { fileUrl }),
+    ...(
+      fileUrl === undefined ? {} :
+      { fileUrl }
+    ),
   };
 };

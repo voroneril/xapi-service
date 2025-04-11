@@ -20,13 +20,9 @@ export default (config: Config) => {
       registration: opts.registration,
     });
 
-    const keysToDelete = deleteResult.states
-      .filter((state) => {
-        return state.content === undefined;
-      })
-      .map((state) => {
-        return `${state.id}.${state.extension}`;
-      });
+    const keysToDelete = deleteResult.states.filter((state) => {
+      return state.content === undefined;
+    }).map((state) => { return `${state.id}.${state.extension}`; });
 
     await config.repo.deleteStatesContent({
       keys: keysToDelete,

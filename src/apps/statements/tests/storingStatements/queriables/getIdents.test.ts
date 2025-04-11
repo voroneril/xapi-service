@@ -37,44 +37,48 @@ const identifiedGroup: Group = {
 
 const membersGroup: Group = {
   ...identifiedGroup,
-  member: [mboxShaAgent, openIDAgent, accountAgent as Actor, mboxShaAgent],
+  member: [
+    mboxShaAgent,
+    openIDAgent,
+    accountAgent as Actor,
+    mboxShaAgent,
+  ],
 };
 
 describe('create ident from agent', () => {
   it('should take an mbox actor and return an array with the ident', () => {
     const idents = getActorIdents(mboxAgent);
-    assert.deepStrictEqual(idents, [mboxAgent.mbox]);
+    assert.deepEqual(idents, [mboxAgent.mbox]);
   });
 
   it('should take an mboxsha1_sum actor and return an array with the ident', () => {
     const idents = getActorIdents(mboxShaAgent);
-    assert.deepStrictEqual(idents, [mboxShaAgent.mbox_sha1sum]);
+    assert.deepEqual(idents, [mboxShaAgent.mbox_sha1sum]);
   });
 
   it('should take an account actor and return an array with the ident', () => {
     const idents = getActorIdents(accountAgent as Actor);
     const expectedIdent = `${accountAgent.account.homePage}|${accountAgent.account.name}`;
-    assert.deepStrictEqual(idents, [expectedIdent]);
+    assert.deepEqual(idents, [expectedIdent]);
   });
 
   it('should take an openid actor and return an array with the ident', () => {
     const idents = getActorIdents(openIDAgent);
-    assert.deepStrictEqual(idents, [openIDAgent.openid]);
+    assert.deepEqual(idents, [openIDAgent.openid]);
   });
 
   it('should take a group and return an array of idents including the members', () => {
     const idents = getGroupIdents(membersGroup);
     const member = membersGroup.member as Actor[];
-    assert.strictEqual(member.length, idents.length);
+    assert.equal(member.length, idents.length);
 
-    assert.deepStrictEqual(
+    assert.deepEqual(
       idents.sort(),
       [
         mboxAgent.mbox,
         openIDAgent.openid,
         `${accountAgent.account.homePage}|${accountAgent.account.name}`,
         mboxShaAgent.mbox_sha1sum,
-      ].sort(),
-    );
+      ].sort());
   });
 });

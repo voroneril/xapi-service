@@ -1,3 +1,6 @@
 import CommonConfig from 'jscommons/dist/fsRepo/Config';
 
-export default CommonConfig;
+// tslint:disable-next-line:no-empty-interface
+interface Config extends CommonConfig { }
+
+export default Config;

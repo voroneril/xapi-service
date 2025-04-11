@@ -1,7 +1,10 @@
 import assertError from 'jscommons/dist/tests/utils/assertError';
 import { Warnings } from 'rulr';
 import assertProfile from '../../../utils/assertProfile';
-import { TEST_CONTENT, TEST_INVALID_ACTIVITY_ID } from '../../../utils/testValues';
+import {
+  TEST_CONTENT,
+  TEST_INVALID_ACTIVITY_ID,
+} from '../../../utils/testValues';
 import setup from '../utils/setup';
 import overwriteProfile from './utils/overwriteProfile';
 
@@ -14,12 +17,9 @@ describe('overwriteProfile with non-existing model', () => {
   });
 
   it('should throw warnings when using an invalid activity id', async () => {
-    const promise = overwriteProfile(
-      {
-        activityId: TEST_INVALID_ACTIVITY_ID,
-      },
-      TEST_CONTENT,
-    );
+    const promise = overwriteProfile({
+      activityId: TEST_INVALID_ACTIVITY_ID,
+    }, TEST_CONTENT);
     await assertError(Warnings, promise);
   });
 });

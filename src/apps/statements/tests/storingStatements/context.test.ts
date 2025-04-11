@@ -18,7 +18,7 @@ describe('store statement with context', () => {
 
   const assertContext = (context: any, expectedContextActivities: any) => {
     if (context !== undefined && context.contextActivities !== undefined) {
-      assert.deepStrictEqual(context.contextActivities, expectedContextActivities);
+      assert.deepEqual(context.contextActivities, expectedContextActivities);
     } else {
       /* istanbul ignore next */
       assert(false, 'Expected context activities to be defined');
@@ -32,36 +32,30 @@ describe('store statement with context', () => {
       voided: false,
       client,
     });
-
-    return result.statements[0];
+    const statement = result.statements[0];
+    return statement;
   };
 
   const testWrappedContext = async (key: string) => {
     const expectedContextActivities = { [key]: [TEST_ACTIVITY] };
-    await storeStatements([
-      createStatement({
-        id: TEST_ID,
-        ...createContext({
-          [key]: TEST_ACTIVITY,
-        }),
+    await storeStatements([createStatement({
+      id: TEST_ID,
+      ...createContext({
+        [key]: TEST_ACTIVITY,
       }),
-    ]);
+    })]);
     const statement = await getStatement();
     assertContext(statement.context, expectedContextActivities);
   };
 
   const testWrappedSubContext = async (key: string) => {
     const expectedContextActivities = { [key]: [TEST_ACTIVITY] };
-    await storeStatements([
-      createStatement({
-        id: TEST_ID,
-        ...createSubStatement(
-          createContext({
-            [key]: TEST_ACTIVITY,
-          }),
-        ),
-      }),
-    ]);
+    await storeStatements([createStatement({
+      id: TEST_ID,
+      ...createSubStatement(createContext({
+        [key]: TEST_ACTIVITY,
+      })),
+    })]);
     const statement = await getStatement();
     if (statement.object.objectType === 'SubStatement') {
       assertContext(statement.object.context, expectedContextActivities);
@@ -71,35 +65,35 @@ describe('store statement with context', () => {
     }
   };
 
-  it("should wrap a statement's parent in an array when given an object", async () => {
+  it('should wrap a statement\'s parent in an array when given an object', async () => {
     await testWrappedContext('parent');
   });
 
-  it("should wrap a statement's grouping in an array when given an object", async () => {
+  it('should wrap a statement\'s grouping in an array when given an object', async () => {
     await testWrappedContext('grouping');
   });
 
-  it("should wrap a statement's category in an array when given an object", async () => {
+  it('should wrap a statement\'s category in an array when given an object', async () => {
     await testWrappedContext('category');
   });
 
-  it("should wrap a statement's other in an array when given an object", async () => {
+  it('should wrap a statement\'s other in an array when given an object', async () => {
     await testWrappedContext('other');
   });
 
-  it("should wrap a sub statement's parent in an array when given an object", async () => {
+  it('should wrap a sub statement\'s parent in an array when given an object', async () => {
     await testWrappedSubContext('parent');
   });
 
-  it("should wrap a sub statement's grouping in an array when given an object", async () => {
+  it('should wrap a sub statement\'s grouping in an array when given an object', async () => {
     await testWrappedSubContext('grouping');
   });
 
-  it("should wrap a sub statement's category in an array when given an object", async () => {
+  it('should wrap a sub statement\'s category in an array when given an object', async () => {
     await testWrappedSubContext('category');
   });
 
-  it("should wrap a sub statement's other in an array when given an object", async () => {
+  it('should wrap a sub statement\'s other in an array when given an object', async () => {
     await testWrappedSubContext('other');
   });
 });

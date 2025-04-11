@@ -15,7 +15,7 @@ const options = {
   stateId: TEST_STATE_ID,
 };
 
-export default (optsOverrides: Record<string, unknown> = {}): Test => {
+export default (optsOverrides: object = {}): Test => {
   return supertest
     .delete(route)
     .set('X-Experience-API-Version', xapiHeaderVersion)

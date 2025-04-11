@@ -1,4 +1,4 @@
-import { StatusCodes } from 'http-status-codes';
+import { BAD_REQUEST, OK } from 'http-status-codes';
 import { stringify as createQueryString } from 'query-string';
 import { route, xapiHeaderVersion } from '../../../utils/constants';
 import {
@@ -21,7 +21,7 @@ describe('expressPresenter using the alternate request syntax', () => {
         activityId: TEST_ACTIVITY_ID,
         agent: JSON.stringify(TEST_MBOX_AGENT),
       })
-      .expect(StatusCodes.BAD_REQUEST);
+      .expect(BAD_REQUEST);
   });
 
   it('should not error when using an invalid content type', async () => {
@@ -31,12 +31,10 @@ describe('expressPresenter using the alternate request syntax', () => {
       .set('Content-Type', 'invalid_content_type')
       .set('X-Experience-API-Version', xapiHeaderVersion)
       .query({ method: 'GET' })
-      .send(
-        createQueryString({
-          activityId: TEST_ACTIVITY_ID,
-          agent: JSON.stringify(TEST_MBOX_AGENT),
-        }),
-      )
-      .expect(StatusCodes.OK, []);
+      .send(createQueryString({
+        activityId: TEST_ACTIVITY_ID,
+        agent: JSON.stringify(TEST_MBOX_AGENT),
+      }))
+      .expect(OK, []);
   });
 });

@@ -1,4 +1,4 @@
-import { StatusCodes } from 'http-status-codes';
+import { BAD_REQUEST, OK } from 'http-status-codes';
 import { route, xapiHeaderVersion } from '../../../utils/constants';
 import {
   ALTERNATE_CONTENT_TYPE,
@@ -21,7 +21,7 @@ describe('expressPresenter.getStates using the alternate request syntax', () => 
         agent: JSON.stringify(TEST_MBOX_AGENT),
         registration: TEST_REGISTRATION,
       })
-      .expect(StatusCodes.BAD_REQUEST);
+      .expect(BAD_REQUEST);
   });
 
   it('should return no state ids when getting a non-existing activity id', async () => {
@@ -35,6 +35,6 @@ describe('expressPresenter.getStates using the alternate request syntax', () => 
         agent: JSON.stringify(TEST_MBOX_AGENT),
         registration: TEST_REGISTRATION,
       })
-      .expect(StatusCodes.OK, []);
+      .expect(OK, []);
   });
 });

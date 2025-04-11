@@ -25,7 +25,7 @@ describe('get statement', () => {
       client: TEST_CLIENT,
     });
     const voidedStatement = result.statements[0];
-    assert.strictEqual(voidedStatement.id, TEST_ID);
+    assert.equal(voidedStatement.id, TEST_ID);
   };
 
   it('should throw an error when the statement does not exist', async () => {

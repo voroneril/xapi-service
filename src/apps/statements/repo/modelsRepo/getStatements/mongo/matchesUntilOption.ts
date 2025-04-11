@@ -1,9 +1,7 @@
 import { Opts } from '../Signature';
 
-export default (opts: Opts) => {
-  return opts.until === undefined
-    ? {}
-    : {
-        stored: { $lte: new Date(opts.until) },
-      };
+export default (opts: Opts): Object => {
+  return opts.until === undefined ? {} : {
+    stored: { $lte: new Date(opts.until) },
+  };
 };

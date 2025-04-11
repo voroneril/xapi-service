@@ -1,4 +1,5 @@
-import { ObjectId } from 'mongodb';
+/* tslint:disable:deprecation - find isn't really deprecated */
+import { ObjectID } from 'mongodb';
 import GetProfilesOptions from '../repoFactory/options/GetProfilesOptions';
 import GetProfilesResult from '../repoFactory/results/GetProfilesResult';
 import Config from './Config';
@@ -8,11 +9,15 @@ export default (config: Config) => {
   return async (opts: GetProfilesOptions): Promise<GetProfilesResult> => {
     const collection = (await config.db()).collection(COLLECTION_NAME);
 
-    const sinceFilter = opts.since !== undefined ? { updatedAt: { $gt: opts.since } } : {};
+    const sinceFilter = (
+      opts.since !== undefined
+        ? { updatedAt: { $gt: opts.since } }
+        : {}
+    );
     const filter = {
       activityId: opts.activityId,
-      lrs: new ObjectId(opts.client.lrs_id),
-      organisation: new ObjectId(opts.client.organisation),
+      lrs: new ObjectID(opts.client.lrs_id),
+      organisation: new ObjectID(opts.client.organisation),
       ...sinceFilter,
     };
 

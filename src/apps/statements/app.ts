@@ -1,3 +1,4 @@
+/* tslint:disable:max-file-line-count */
 import AppConfig from './AppConfig';
 import presenterFactory, { Result } from './expressPresenter';
 import repoFactory from './repo/facade';
@@ -19,12 +20,10 @@ export default (appConfig: AppConfig): Result => {
       redis: {
         client: appConfig.repo.redis.client,
         prefix: appConfig.repo.redis.prefix,
-        isQueuePriorityEnabled: appConfig.repo.redis.isQueuePriorityEnabled,
       },
-      sqs: {
-        client: appConfig.repo.sqs.client,
-        prefix: appConfig.repo.sqs.prefix,
-        isQueuePriorityEnabled: appConfig.repo.sqs.isQueuePriorityEnabled,
+      sentinel: {
+        client: appConfig.repo.sentinel.client,
+        prefix: appConfig.repo.sentinel.prefix,
       },
     },
     models: {

@@ -1,6 +1,5 @@
-import { URL } from 'url';
 import { Request } from 'express';
 import { defaultTo } from 'lodash';
+import { parse } from 'url';
 
-export default (req: Request) =>
-  defaultTo<string>(new URL(req.originalUrl, 'http://localhost').pathname, '/');
+export default (req: Request) => defaultTo<string>(parse(req.originalUrl).pathname, '/');

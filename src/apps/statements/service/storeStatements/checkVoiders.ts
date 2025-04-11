@@ -17,19 +17,16 @@ const isVoiding = (model: UnstoredStatementModel): boolean => {
 };
 
 const getVoiders = (statements: UnstoredStatementModel[]): VoidResult => {
-  return statements.reduce(
-    (result: VoidResult, model) => {
-      if (isVoiding(model) && model.statement.object.objectType === 'StatementRef') {
-        return {
-          voiderIds: [...result.voiderIds, model.statement.id],
-          voidedObjectIds: [...result.voidedObjectIds, model.statement.object.id],
-          voidingModels: [...result.voidingModels, model],
-        };
-      }
-      return result;
-    },
-    { voiderIds: [], voidedObjectIds: [], voidingModels: [] },
-  );
+  return statements.reduce((result: VoidResult, model) => {
+    if (isVoiding(model) && model.statement.object.objectType === 'StatementRef') {
+      return {
+        voiderIds: [...result.voiderIds, model.statement.id],
+        voidedObjectIds: [...result.voidedObjectIds, model.statement.object.id],
+        voidingModels: [...result.voidingModels, model],
+      };
+    }
+    return result;
+  }, { voiderIds: [], voidedObjectIds: [], voidingModels: [] });
 };
 
 const checkWithinStatements = (voiderIds: string[], voidingModels: UnstoredStatementModel[]) => {
@@ -75,10 +72,7 @@ export default async (
   statements: UnstoredStatementModel[],
   client: ClientModel,
 ) => {
-  /* istanbul ignore if - Deprecated flag */
-  if (!config.enableVoidingChecks) {
-    return [];
-  }
+  if (!config.enableVoidingChecks) { return []; }
   const { voiderIds, voidedObjectIds, voidingModels }: VoidResult = getVoiders(statements);
 
   if (voiderIds.length > 0) {
